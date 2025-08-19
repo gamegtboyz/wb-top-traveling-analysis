@@ -15,4 +15,6 @@ As Apache Airflow is the Mac-Native software, we will show the installation thro
 ```mkdir -p ./dags ./logs ./plugins ./config```
 3. Set the permission of current user to virtual environment via\
 ```echo -e "AIRFLOW_UID=$(id -u)" > .env```
-4. Go to ./dags then create DAG via ```dags.py```
+
+
+## Create DAG (Directed Acyclic Graph)

@@ -1,3 +1,7 @@
 data.csv
 *.ipynb
 /logs
+/config
+test.py
+.env
+/dags/__pycache__
