@@ -1,9 +1,9 @@
 import wbgapi as wb
 import pandas as pd
 
-def extract():
+def extract_transform_load():
     """
-    Extracts data from the World Bank Global Findex database, then load it into a csv file
+    Extract, Transform, and Load data from the World Bank Global Findex database into a CSV file.
     """
     selected_indicators = [
         'NY.GDP.MKTP.CD',   # GDP (current US$)
@@ -16,19 +16,14 @@ def extract():
 
     period = range(2000, 2021)  # 2000 to 2020
 
-    # Fetch data from the World Bank API
-    data = wb.get_dataframe(
+    # Extract data from the World Bank API
+    data = wb.data.DataFrame(
         selected_indicators,
         selected_countries,
         time=period
     )
-    return data
 
-
-def transform(data):
-    """
-    Transforms the extracted data by filling missing values and calculating ratios.
-    """
+    # Transform the data by filling missing values and calculating ratios
     for country in data.index.levels[0]:
         data.loc[[(country, 'ST.INT.ARVL')]] = ratiofill(
             data.loc[[(country, 'ST.INT.ARVL')]],
@@ -39,15 +34,9 @@ def transform(data):
             data.loc[[(country, 'ST.INT.RCPT.CD')]],
             data.loc[[(country, 'ST.INT.ARVL')]]
         )
-    return data
 
-
-def load_csv(data, filename='data.csv'):
-    """
-    Loads the data into a CSV file.
-    """
-    data.to_csv(filename, index=True)
-    print(f"Data loaded into {filename}")
+    # Load the data into a CSV file
+    data.to_csv('./data/data.csv')
 
 
 def ratiofill(fill_df, ref_df):

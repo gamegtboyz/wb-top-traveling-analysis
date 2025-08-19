@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from config.dbconfig import connection_string
 
 def load_sql():
-    data = pd.read_csv('./data.csv')
+    data = pd.read_csv('./data/data.csv')
 
     engine = create_engine(connection_string)
 

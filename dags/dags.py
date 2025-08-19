@@ -9,7 +9,7 @@ from airflow.models.dag import DAG
 from airflow.operators.python import PythonOperator
 
 # import the function to be executed
-from etl import extract, transform, load_csv
+from etl import extract_transform_load
 from db_load import load_sql
 
 
@@ -21,31 +21,14 @@ with DAG(
         'retries': 1,
         'retry_delay': timedelta(minutes=5)
     },
-    schedule = timedelta(months=1),
-    start_date = datetime(2025, 08, 1)
+    schedule = timedelta(days=30),
+    start_date = datetime(2025, 8, 1)
 ) as dag:
     
     # set the tasks list
-    extract = PythonOperator(
-        task_id='extract_data',
-        python_callable=extract,
-        dag=dag
-    )
-
-    transform = PythonOperator(
-        task_id='transform_data',
-        python_callable=transform,
-        op_kwargs={'data': '{{ task_instance.xcom_pull(task_ids="extract_data") }}'},
-        dag=dag
-    )
-
-    load_csv = PythonOperator(
-        task_id='load_csv',
-        python_callable=load_csv,
-        op_kwargs={
-            'data': '{{ task_instance.xcom_pull(task_ids="transform_data") }}',
-            'filename': 'data.csv'
-        },
+    extract_transform_load = PythonOperator(
+        task_id='extract_transform_load',
+        python_callable=extract_transform_load,
         dag=dag
     )
 
@@ -54,7 +37,6 @@ with DAG(
         python_callable=load_sql,
         dag=dag
     )
-
-
+    
     # set the task dependencies
-    extract >> transform >> load_csv >> load_sql
+    extract_transform_load >> load_sql
