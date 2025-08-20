@@ -9,7 +9,8 @@ def extract_transform_load():
         'NY.GDP.MKTP.CD',   # GDP (current US$)
         'ST.INT.RCPT.CD',   # International tourism, receipts (current US$)
         'ST.INT.ARVL',      # International tourism, number of arrivals
-        'SP.POP.TOTL'       # Population, total
+        'SP.POP.TOTL',      # Population, total
+        'NY.GDP.PCAP.CD'    # GDP per capita (current US$)
     ]
 
     selected_countries = ['USA','MEX','FRA','ITA','JPN','THA']
