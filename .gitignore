@@ -5,3 +5,4 @@ data.csv
 test.py
 .env
 /dags/__pycache__
+test_data.csv

@@ -35,6 +35,16 @@ def extract_transform_load():
             data.loc[[(country, 'ST.INT.ARVL')]]
         )
 
+    data.reset_index(inplace=True)
+    data = data.melt(id_vars=['economy', 'series'],
+                     var_name='year',
+                     value_name='value')
+    data['year'] = data['year'].str.replace('YR', '').astype(int)
+    data.rename(columns={
+        'economy': 'country',
+        'series': 'indicator'
+    }, inplace=True)
+
     # Load the data into a CSV file
     data.to_csv('./data/data.csv')
 
