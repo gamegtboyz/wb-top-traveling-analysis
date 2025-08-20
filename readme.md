@@ -50,6 +50,8 @@ After container and dag buiding, we will acccess the Airflow GUI to test what we
 >     - In `docker-compose.yaml`, go to the `x-airflow-common/build` section (around line 52) and uncomment it to enable custom package installation.
 >     - In the terminal, use the following commands to build the new custom docker image and compose the container:
 >       ```
+>       --Bash--
+>
 >       docker-compose build
 >       docker-compose up -d
 >       ```
@@ -59,6 +61,8 @@ After container and dag buiding, we will acccess the Airflow GUI to test what we
 >     - Check the configuration for the folders corresponding to those you created.
 >     - Add a new line to map the output directory. For example, to use a folder named `data`, add:
 >       ```
+>       --docker-compose.yaml--
+>
 >       - ${AIRFLOW_PROJ_DIR:-.}/data:/opt/airflow/data
 >       ```
 >     - Create a new folder named `data` in your project directory to store the output files.
