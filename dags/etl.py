@@ -76,7 +76,7 @@ def extract_transform_load():
     }, inplace=True)
 
     # Load the data into a CSV file
-    data.to_csv('./data/data.csv')
+    data.to_csv('./data/data.csv', index=False)
 
 
 def ratiofill(fill_df, ref_df):
