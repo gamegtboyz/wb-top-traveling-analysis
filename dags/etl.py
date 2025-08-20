@@ -3,7 +3,7 @@ import pandas as pd
 
 def extract_transform_load():
     """
-    Extract, Transform, and Load data from the World Bank Global Findex database into a CSV file.
+    Extracts data from the World Bank Global Findex database, then load it into a csv file
     """
     selected_indicators = [
         'NY.GDP.MKTP.CD',   # GDP (current US$)
@@ -16,14 +16,20 @@ def extract_transform_load():
 
     period = range(2000, 2021)  # 2000 to 2020
 
-    # Extract data from the World Bank API
+    global data
+
+    # Fetch data from the World Bank API
     data = wb.data.DataFrame(
         selected_indicators,
-        selected_countries,
+        # selected_countries,
         time=period
     )
 
-    # Transform the data by filling missing values and calculating ratios
+    # fetch country map data
+    country_map = wb.economy.DataFrame().reset_index()
+    country_map = country_map[['id', 'name', 'incomeLevel']]
+
+    # transform the data
     for country in data.index.levels[0]:
         data.loc[[(country, 'ST.INT.ARVL')]] = ratiofill(
             data.loc[[(country, 'ST.INT.ARVL')]],
@@ -35,13 +41,35 @@ def extract_transform_load():
             data.loc[[(country, 'ST.INT.ARVL')]]
         )
 
+    # reset the index
     data.reset_index(inplace=True)
+
+    # melt to rename the series of year value
     data = data.melt(id_vars=['economy', 'series'],
                      var_name='year',
                      value_name='value')
     data['year'] = data['year'].str.replace('YR', '').astype(int)
+
+    # pivot the data
+    data = data.pivot_table(
+        index=['economy', 'year'],
+        columns='series',
+        values='value'
+    ).reset_index()
+
+    # add the calculated column
+    data['rcpt_per_arvl'] = data['ST.INT.RCPT.CD'] / data['ST.INT.ARVL']
+    data['rcpt_per_gdp'] = data['ST.INT.RCPT.CD'] / data['NY.GDP.MKTP.CD']
+    data['arvl_per_pop'] = data['ST.INT.ARVL'] / data['SP.POP.TOTL']
+
+    # join the country with the name and income level
+    data = data.merge(country_map, left_on='economy', right_on='id', how='left')
+
+    # rename the columns
     data.rename(columns={
-        'economy': 'country',
+        'economy': 'country_code',
+        'id': 'country_name',
+        'incomeLevel': 'income_level',
         'series': 'indicator'
     }, inplace=True)
 

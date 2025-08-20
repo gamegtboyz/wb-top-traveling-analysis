@@ -1,8 +1,7 @@
-data.csv
 *.ipynb
 /logs
 /config
 test.py
 .env
 /dags/__pycache__
-test_data.csv
+*.csv
