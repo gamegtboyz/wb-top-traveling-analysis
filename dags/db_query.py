@@ -14,3 +14,6 @@ def query_to_csv():
 
     # read the query, then export to csv files
     pd.read_sql_query(rcpt_per_gdp_query, engine).to_csv('./data/extracted_query.csv')
+
+    # close database connection
+    engine.dispose()
