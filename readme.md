@@ -66,3 +66,21 @@ After container and dag buiding, we will acccess the Airflow GUI to test what we
 >       - ${AIRFLOW_PROJ_DIR:-.}/data:/opt/airflow/data
 >       ```
 >     - Create a new folder named `data` in your project directory to store the output files.
+
+## 4. Create PowerBI visualization
+At this point, we expect that we are able to run the DAG as it supposed to be. Now we will use the exported csv data to build up visualization from .csv files.
+There's the number of skillsets required to build up the visualization, but here's the list of skills used in this file;
+- Transform the data
+- Dashboard building
+- Adding both new and quick measurements
+
+## 5. Query data from the database
+If you follow step 3 correctly, it's supposed that the file was writted into the database the name specified in `dbconfig.py`. We gonna query it from the database, then export into new csv file.
+
+Briefly, the new task follows these steps:
+- **Create** engine using connection string predefined in `dbconfig.py`
+- **Specify** the SQL query.
+- **Use** `read_sql_query()` to connect with the database using predefined query and engine, then export to .csv files
+- **Close** the connection to the database.
+
+As we need this tasks to perform automatically, we also need to include this tasks in dag. So, we need to wrap this process into callable function, then add this tasks to dag.
