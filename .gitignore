@@ -6,3 +6,4 @@ test.py
 /dags/__pycache__
 *.csv
 streamlit-dashboard.py
+*.drawio*
