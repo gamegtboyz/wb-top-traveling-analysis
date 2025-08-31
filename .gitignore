@@ -8,3 +8,4 @@ test.py
 *.csv
 streamlit-dashboard.py
 *.drawio*
+world_tourism_analysis_csv.pbix
