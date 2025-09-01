@@ -1,5 +1,7 @@
 import wbgapi as wb
 import pandas as pd
+from sqlalchemy import create_engine
+from config.dbconfig import connection_string
 
 def extract_transform_load():
     """
@@ -13,8 +15,6 @@ def extract_transform_load():
         'NY.GDP.PCAP.CD'    # GDP per capita (current US$)
     ]
 
-    selected_countries = ['USA','MEX','FRA','ITA','JPN','THA']
-
     period = range(2000, 2021)  # 2000 to 2020
 
     global data
@@ -22,7 +22,6 @@ def extract_transform_load():
     # Fetch data from the World Bank API
     data = wb.data.DataFrame(
         selected_indicators,
-        # selected_countries,
         time=period
     )
 
@@ -75,8 +74,18 @@ def extract_transform_load():
         'series': 'indicator'
     }, inplace=True)
 
-    # Load the data into a CSV file
-    data.to_csv('./data/data.csv', index=False)
+    # Load the data into a SQL database
+    engine = create_engine(connection_string)
+
+    table_name = 'world_travel_data'
+
+    try:
+        data.to_sql(table_name, engine, if_exists='replace', index=True)
+        print(f"data loaded into {table_name} table in the database successfully.")
+    except Exception as e:
+        print(f"An error occurred while loading data into the database: {e}")
+
+    engine.dispose()
 
 
 def ratiofill(fill_df, ref_df):

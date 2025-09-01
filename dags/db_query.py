@@ -8,12 +8,18 @@ def query_to_csv():
     engine = create_engine(connection_string)
 
     # create SQL query
-    rcpt_per_gdp_query = "SELECT " \
+    query = "SELECT * FROM world_travel_data"
+
+    # read the query, then export to csv files
+    pd.read_sql_query(query, engine).to_csv('./data/data.csv')
+
+    # create SQL query
+    selected_query = "SELECT " \
     "country_code, country_name, year, 'NY.GDP.MKTP.CD' AS GDP, rcpt_per_gdp, 'ST.INT.ARVL' AS Arrivals, 'ST.INT.RCPT.CD' AS Receipt, rcpt_per_arvl " \
     "FROM world_travel_data"
 
     # read the query, then export to csv files
-    pd.read_sql_query(rcpt_per_gdp_query, engine).to_csv('./data/extracted_query.csv')
+    pd.read_sql_query(selected_query, engine).to_csv('./data/extracted_query.csv')
 
     # close database connection
     engine.dispose()

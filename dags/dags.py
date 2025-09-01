@@ -10,7 +10,6 @@ from airflow.operators.python import PythonOperator
 
 # import the function to be executed
 from etl import extract_transform_load
-from db_load import load_sql
 from db_query import query_to_csv
 
 
@@ -33,12 +32,6 @@ with DAG(
         dag=dag
     )
 
-    load_sql = PythonOperator(
-        task_id='load_sql',
-        python_callable=load_sql,
-        dag=dag
-    )
-
     query_to_csv = PythonOperator(
         task_id='query_to_csv',
         python_callable=query_to_csv,
@@ -46,4 +39,4 @@ with DAG(
     )
     
     # set the task dependencies
-    extract_transform_load >> load_sql >> query_to_csv
+    extract_transform_load >> query_to_csv
