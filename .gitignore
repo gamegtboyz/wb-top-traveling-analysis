@@ -1,12 +1,13 @@
 *.ipynb
-test.ipynb
 /logs
 /config
 test.py
-.env
+*.env
 /dags/__pycache__
 *.csv
 streamlit-dashboard.py
 *.drawio*
 world_tourism_analysis_csv.pbix
 *.png
+*.json
+*.geojson
