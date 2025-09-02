@@ -15,7 +15,9 @@ data.dropna(axis=0,subset=['income_level'],inplace=True)
 st.sidebar.header('Filters')
 # add sidebar elements
 selected_countries = st.sidebar.selectbox(label='Country:',
-                                          options=data['country_name'].unique())
+                                          options=data['country_name'].unique(),
+                                          index=None,
+                                          placeholder='Select Country')
 
 # we need to show the year options in reverse order
 selected_year = st.sidebar.selectbox(label='Year:',
