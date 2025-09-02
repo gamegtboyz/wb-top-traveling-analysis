@@ -65,6 +65,7 @@ def extract_transform_load():
     # join the country with the name and income level
     data = data.merge(country_map, left_on='economy', right_on='id', how='left')
     data.drop(columns='id',axis=1,inplace=True)
+    data.dropna(axis=0,subset=['incomeLevel'],inplace=True)
 
     # rename the columns
     data.rename(columns={
