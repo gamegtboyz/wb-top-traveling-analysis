@@ -5,7 +5,6 @@ test.py
 *.env
 /dags/__pycache__
 *.csv
-streamlit-dashboard.py
 *.drawio*
 world_tourism_analysis_csv.pbix
 *.png
