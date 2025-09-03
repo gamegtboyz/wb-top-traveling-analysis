@@ -3,43 +3,30 @@ import plotly.express as px
 from streamlit_plotly_events import plotly_events
 import pandas as pd
 from scipy.stats import gmean
+from streamlit_data import *
 
 # Page and title configuration
 st.set_page_config(page_title="International Tourism Analysis", page_icon='🌏', layout="wide")
 st.title("International Tourism Analysis")
-# import data into work area
-data = pd.read_csv('./data/data.csv')
-data.dropna(axis=0,subset=['income_level'],inplace=True)
 
-# add the sidebar for filters
+
+# add sidebar to filter an amount
 st.sidebar.header('Filters')
-# add sidebar elements
 selected_countries = st.sidebar.selectbox(label='Country:',
                                           options=data['country_name'].unique(),
                                           index=None,
                                           placeholder='Select Country')
 
-# we need to show the year options in reverse order
 selected_year = st.sidebar.selectbox(label='Year:',
-                                     options=data['year'].unique()[::-1].tolist())
+                                     options=data['year'].unique()[::-1].tolist()) # sort the list in reverse order
 
-
-# create data filtering logic
 filtered_amount = data.loc[(data['country_name'] == selected_countries) &\
                            (data['year'] == selected_year)]
 
 # create dashboard component
-
 # first section: value card
 st.header('Internaitonal Tourism in Numbers')
 st.write('Here is your country\'s tourism summarised in numbers.')
-
-# value card
-gdp = filtered_amount['NY.GDP.MKTP.CD'].sum()
-receipt = filtered_amount['ST.INT.RCPT.CD'].sum()
-arrivals = filtered_amount['ST.INT.ARVL'].sum()
-personal_spendings = filtered_amount['rcpt_per_arvl'].sum()
-gdp_contribution = filtered_amount['rcpt_per_gdp'].mean()
 
 col1, col2, col3 = st.columns(3)
 col1.metric(label='Contry', value=selected_countries)
@@ -53,38 +40,11 @@ col6.metric(label='Spendings per person', value=f"{personal_spendings:,.2f} $")
 
 
 
-# the grouped data 
-grouped_receipt = data.groupby(['country_name','year'])[['ST.INT.RCPT.CD']].sum().sort_values(by='ST.INT.RCPT.CD',ascending=False).reset_index()
-grouped_arrivals = data.groupby(['country_name','year'])[['ST.INT.ARVL']].sum().sort_values(by='ST.INT.ARVL',ascending=False).reset_index()
-grouped_spendings = data.groupby(['country_name','year'])[['rcpt_per_arvl']].sum().sort_values(by='rcpt_per_arvl',ascending=False).reset_index()
-grouped_contributions = data.groupby(['country_name','year'])[['rcpt_per_gdp']].sum().sort_values(by='rcpt_per_gdp',ascending=False).reset_index()
-
-# magnage the unit display
-grouped_receipt['Billions'] = (grouped_receipt['ST.INT.RCPT.CD']/1000000000).map("{:,.2f} B".format)
-grouped_arrivals['Millions'] = (grouped_arrivals['ST.INT.ARVL']/1000000).map("{:,.0f} M".format)
-grouped_spendings['Decimals'] = grouped_spendings['rcpt_per_arvl'].map("$ {:,.2f}".format)
-grouped_contributions['Percentage'] = (grouped_contributions['rcpt_per_gdp']*100).map("{:.2f}%".format)
-
-# calculate the value change
-timed_grouped_receipt = grouped_receipt[(grouped_receipt['country_name'] == selected_countries)].sort_values(by='year')
-timed_grouped_receipt['last_period'] = timed_grouped_receipt['ST.INT.RCPT.CD'].shift(1)
-timed_grouped_receipt['pct_change'] = timed_grouped_receipt['ST.INT.RCPT.CD']/timed_grouped_receipt['last_period']
-
-timed_grouped_arrivals = grouped_arrivals[(grouped_arrivals['country_name'] == selected_countries)].sort_values(by='year')
-timed_grouped_arrivals['last_period'] = timed_grouped_arrivals['ST.INT.ARVL'].shift(1)
-timed_grouped_arrivals['pct_change'] = timed_grouped_arrivals['ST.INT.ARVL']/timed_grouped_arrivals['last_period']
-
-timed_grouped_spendings = grouped_spendings[(grouped_spendings['country_name'] == selected_countries)].sort_values(by='year')
-timed_grouped_spendings['last_period'] = timed_grouped_spendings['rcpt_per_arvl'].shift(1)
-timed_grouped_spendings['pct_change'] = timed_grouped_spendings['rcpt_per_arvl']/timed_grouped_spendings['last_period']
-
-timed_grouped_contributions = grouped_contributions[(grouped_contributions['country_name'] == selected_countries)].sort_values(by='year')
-
-# second part: show the trend analysis of selected country
+# second section: trend analysis of selected country
 st.header(f"How does {selected_countries} perform so far?")
 st.write(f"Here's how do {selected_countries} performed so far from 2000 to 2020.")
 
-# 1. Receipts performance
+# 2.1 Receipts Trend
 fig = px.line(timed_grouped_receipt,
               x='year', y='ST.INT.RCPT.CD')
 
@@ -122,7 +82,7 @@ fig.update_layout(title=f"Historical International Tourism Receipt performance",
 
 st.plotly_chart(fig, use_container_width=True)
 
-# 2. Arrivals performance
+# 2.2 Arrivals Trend
 fig = px.line(timed_grouped_arrivals,
               x='year', y='ST.INT.ARVL')
 
@@ -160,7 +120,7 @@ fig.update_layout(title=f"Historical International Tourist Arrivals",
 
 st.plotly_chart(fig, use_container_width=True)
 
-# 3. Spendings trends
+# 2.3 Spendings Trends
 fig = px.line(timed_grouped_spendings,
               x='year', y='rcpt_per_arvl')
 
@@ -198,7 +158,7 @@ fig.update_layout(title=f"Historical International Tourist Spendings",
 
 st.plotly_chart(fig, use_container_width=True)
 
-# 4. Historical GDP contributions
+# 2.4 GDP Contributions Trends
 fig = px.line(timed_grouped_contributions,
               x='year', y='rcpt_per_gdp')
 
@@ -220,11 +180,11 @@ st.plotly_chart(fig, use_container_width=True)
 
 
 
-# # third part: show top 5 countries of the selected year
+# third section: Top 5 countries for the selected year
 st.header(f"Who are the top players in {selected_year}")
 st.write(f"This is the top 5 countries in terms of tourist arrivals, tourism receipt, personal spendings, and contribution to GDP.")
 
-# 1. Top5 receipt
+# 3.1 Top5 Receipt
 fig = px.bar(grouped_receipt[grouped_receipt['year'] == selected_year][0:5][::-1],
              x='ST.INT.RCPT.CD', y='country_name', text='Billions')
 
@@ -244,7 +204,7 @@ fig.update_traces(marker_color='#44af69')
 
 st.plotly_chart(fig, use_container_width=True)
 
-# 2. Top5 Arrivals
+# 3.2 Top5 Arrivals
 fig = px.bar(grouped_arrivals[grouped_arrivals['year'] == selected_year][0:5][::-1],
              x='ST.INT.ARVL', y='country_name', text='Millions')
 
@@ -264,7 +224,7 @@ fig.update_traces(marker_color='#2b9eb3')
 
 st.plotly_chart(fig, use_container_width=True)
 
-# 3. Top5 Spendings
+# 3.3 Top5 Spendings
 fig = px.bar(grouped_spendings[grouped_spendings['year'] == selected_year][0:5][::-1],
              x='rcpt_per_arvl', y='country_name', text='Decimals')
 
@@ -284,7 +244,7 @@ fig.update_traces(marker_color='#f1c40f')
 
 st.plotly_chart(fig, use_container_width=True)
 
-# 3. Top5 GDP contributions
+# 3.4 Top5 GDP contributions
 fig = px.bar(grouped_contributions[grouped_contributions['year'] == selected_year][0:5][::-1],
              x='rcpt_per_gdp', y='country_name', text='Percentage')
 
