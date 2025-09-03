@@ -3,12 +3,15 @@ import plotly.express as px
 from streamlit_plotly_events import plotly_events
 import pandas as pd
 from scipy.stats import gmean
-from streamlit_data import *
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import os
+import torch
+from api_keys_archive import hf_keys
+from huggingface_hub import InferenceClient
 
-# Page and title configuration
-st.set_page_config(page_title="International Tourism Analysis", page_icon='🌏', layout="wide")
-st.title("International Tourism Analysis")
-
+# import data into work area
+data = pd.read_csv('./data/data.csv')
+data.dropna(axis=0,subset=['income_level'],inplace=True)
 
 # add sidebar to filter an amount
 st.sidebar.header('Filters')
@@ -23,10 +26,79 @@ selected_year = st.sidebar.selectbox(label='Year:',
 filtered_amount = data.loc[(data['country_name'] == selected_countries) &\
                            (data['year'] == selected_year)]
 
+# prepare the data
+# value card
+gdp = filtered_amount['NY.GDP.MKTP.CD'].sum()
+receipt = filtered_amount['ST.INT.RCPT.CD'].sum()
+arrivals = filtered_amount['ST.INT.ARVL'].sum()
+personal_spendings = filtered_amount['rcpt_per_arvl'].sum()
+gdp_contribution = filtered_amount['rcpt_per_gdp'].mean()
+
+# the grouped data 
+grouped_receipt = data.groupby(['country_name','year'])[['ST.INT.RCPT.CD']].sum().sort_values(by='ST.INT.RCPT.CD',ascending=False).reset_index()
+grouped_arrivals = data.groupby(['country_name','year'])[['ST.INT.ARVL']].sum().sort_values(by='ST.INT.ARVL',ascending=False).reset_index()
+grouped_spendings = data.groupby(['country_name','year'])[['rcpt_per_arvl']].sum().sort_values(by='rcpt_per_arvl',ascending=False).reset_index()
+grouped_contributions = data.groupby(['country_name','year'])[['rcpt_per_gdp']].sum().sort_values(by='rcpt_per_gdp',ascending=False).reset_index()
+
+# magnage the unit display
+grouped_receipt['Billions'] = (grouped_receipt['ST.INT.RCPT.CD']/1000000000).map("{:,.2f} B".format)
+grouped_arrivals['Millions'] = (grouped_arrivals['ST.INT.ARVL']/1000000).map("{:,.0f} M".format)
+grouped_spendings['Decimals'] = grouped_spendings['rcpt_per_arvl'].map("$ {:,.2f}".format)
+grouped_contributions['Percentage'] = (grouped_contributions['rcpt_per_gdp']*100).map("{:.2f}%".format)
+
+# calculate the value change
+timed_grouped_receipt = grouped_receipt[(grouped_receipt['country_name'] == selected_countries)].sort_values(by='year')
+timed_grouped_receipt['last_period'] = timed_grouped_receipt['ST.INT.RCPT.CD'].shift(1)
+timed_grouped_receipt['pct_change'] = timed_grouped_receipt['ST.INT.RCPT.CD']/timed_grouped_receipt['last_period']
+
+timed_grouped_arrivals = grouped_arrivals[(grouped_arrivals['country_name'] == selected_countries)].sort_values(by='year')
+timed_grouped_arrivals['last_period'] = timed_grouped_arrivals['ST.INT.ARVL'].shift(1)
+timed_grouped_arrivals['pct_change'] = timed_grouped_arrivals['ST.INT.ARVL']/timed_grouped_arrivals['last_period']
+
+timed_grouped_spendings = grouped_spendings[(grouped_spendings['country_name'] == selected_countries)].sort_values(by='year')
+timed_grouped_spendings['last_period'] = timed_grouped_spendings['rcpt_per_arvl'].shift(1)
+timed_grouped_spendings['pct_change'] = timed_grouped_spendings['rcpt_per_arvl']/timed_grouped_spendings['last_period']
+
+timed_grouped_contributions = grouped_contributions[(grouped_contributions['country_name'] == selected_countries)].sort_values(by='year')
+
+
+# load the models here
+model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_pretrained(model_name)
+
+
+client = InferenceClient(
+    provider="auto",
+    api_key=os.environ["HF_TOKEN"],
+)
+
+def llama3_write(data, queries):
+    messages = [
+        {'role': 'user', 'content': queries}
+    ]
+
+    inputs = tokenizer.apply_chat_template(
+        messages,
+        add_generation_prompt=True,
+        tokenize=True,
+        return_dict=True,
+        return_tensors='pt'
+    ).to(model.device)
+
+    outputs = model.generate(**inputs, max_new_tokens=40)
+
+    return tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:])
+
+# Page and title configuration
+st.set_page_config(page_title="International Tourism Analysis", page_icon='🌏', layout="wide")
+st.title("International Tourism Analysis")
+
+
 # create dashboard component
 # first section: value card
 st.header('Internaitonal Tourism in Numbers')
-st.write('Here is your country\'s tourism summarised in numbers.')
+st.write("I'm thinking what should I put here??")
 
 col1, col2, col3 = st.columns(3)
 col1.metric(label='Contry', value=selected_countries)
@@ -42,7 +114,7 @@ col6.metric(label='Spendings per person', value=f"{personal_spendings:,.2f} $")
 
 # second section: trend analysis of selected country
 st.header(f"How does {selected_countries} perform so far?")
-st.write(f"Here's how do {selected_countries} performed so far from 2000 to 2020.")
+st.write("")
 
 # 2.1 Receipts Trend
 fig = px.line(timed_grouped_receipt,

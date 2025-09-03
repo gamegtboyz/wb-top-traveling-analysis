@@ -4,6 +4,7 @@
 test.py
 *.env
 /dags/__pycache__
+*/__pycache__
 *.csv
 *.drawio*
 world_tourism_analysis_csv.pbix
@@ -11,3 +12,4 @@ world_tourism_analysis_csv.pbix
 *.json
 *.geojson
 *.html
+api_keys_archive.py
