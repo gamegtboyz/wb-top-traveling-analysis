@@ -101,7 +101,7 @@ fig.add_annotation(
     borderwidth=1,
 )
 
-fig.update_layout(title=f"Historical receipt performance",
+fig.update_layout(title=f"Historical International Tourism Receipt performance",
                   title_subtitle = {
                       'font': {
                           'color': '#FF0000',
@@ -111,7 +111,7 @@ fig.update_layout(title=f"Historical receipt performance",
                   },
                   yaxis={
                       'title':{
-                          'text': 'International Tourism Receipt (US Dollars)'
+                          'text': 'Int\'l Tourism Receipt (US Dollars)'
                       }
                   },
                   xaxis={
@@ -149,7 +149,7 @@ fig.update_layout(title=f"Historical International Tourist Arrivals",
                   },
                   yaxis={
                       'title':{
-                          'text': 'International Tourist Arrivals (Person)'
+                          'text': 'Int\'l Tourist Arrivals (Person)'
                       }
                   },
                   xaxis={
@@ -187,7 +187,7 @@ fig.update_layout(title=f"Historical International Tourist Spendings",
                   },
                   yaxis={
                       'title':{
-                          'text': 'International Tourist Arrivals Spendings (US Dollars)'
+                          'text': 'Int\'l Tourist Spendings (US Dollars)'
                       }
                   },
                   xaxis={
@@ -204,10 +204,10 @@ fig = px.line(timed_grouped_contributions,
 
 fig.update_traces(line_color='#d90368')
 
-fig.update_layout(title=f"Historical International Tourist Spendings",
+fig.update_layout(title=f"Historical International Receipts Contribution to GDP",
                   yaxis={
                       'title':{
-                          'text': 'International Tourist Arrivals Spendings (US Dollars)'
+                          'text': 'GDP Contributions'
                       }
                   },
                   xaxis={
