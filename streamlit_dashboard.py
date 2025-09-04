@@ -2,7 +2,7 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 from scipy.stats import gmean
-from api_keys_archive import hf_keys
+import os
 from huggingface_hub import InferenceClient, login
 
 # import data into work area
@@ -59,8 +59,8 @@ timed_grouped_spendings['pct_change'] = timed_grouped_spendings['rcpt_per_arvl']
 
 timed_grouped_contributions = grouped_contributions[(grouped_contributions['country_name'] == selected_countries)].sort_values(by='year')
 
-
-login(hf_keys)
+hf_token = os.getenv("HF_TOKEN")
+login(hf_token)
 
 # load the models here
 model_id = "meta-llama/Llama-3.1-8B-Instruct"
