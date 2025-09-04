@@ -1,0 +1,4 @@
+plotly.express
+pandas
+scipy.stats
+huggingface_hub
