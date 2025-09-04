@@ -101,7 +101,7 @@ col6.metric(label='Spendings per person', value=f"{personal_spendings:,.2f} $")
 
 
 # second section: trend analysis of selected country
-st.header(f"How does {selected_countries} perform so far from 2000 to 2020?")
+st.header(f"How does {selected_countries} perform so far from 2000 to {data['year'].unique()[::-1].tolist()[0]}?")
 
 if selected_countries:
     st.write(llama3_write(timed_grouped_receipt, f'How does the International tourism of {selected_countries} goes for the last 20 years from 2000 to 2020? Could you write the narratives as the professional economist without showing a single line of code? Please make it conclusive under your max_tokens credit.'))
