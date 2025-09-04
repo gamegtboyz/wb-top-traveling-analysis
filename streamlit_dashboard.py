@@ -117,7 +117,7 @@ fig2_1.update_traces(line_color='#44af69')
 fig2_1.add_annotation(
     x=timed_grouped_receipt['year'].min() + ((timed_grouped_receipt['year'].max() - timed_grouped_receipt['year'].min())*.15),
     y=timed_grouped_receipt['ST.INT.RCPT.CD'].max()*0.85,
-    text=f"Growth rate: ${((gmean(timed_grouped_receipt['pct_change'][1:-1])-1)*100):,.2f}%",
+    text=f"Growth rate: {((gmean(timed_grouped_receipt['pct_change'][1:-1])-1)*100):,.2f}%",
     font=dict(size=24, color="black"),
     align="center",
     bgcolor="rgba(255, 255, 255, 0.8)",
@@ -155,7 +155,7 @@ fig2_2.update_traces(line_color='#2b9eb3')
 fig2_2.add_annotation(
     x=timed_grouped_arrivals['year'].min() + ((timed_grouped_arrivals['year'].max() - timed_grouped_arrivals['year'].min())*.15),
     y=timed_grouped_arrivals['ST.INT.ARVL'].max()*0.85,
-    text=f"Growth rate: ${((gmean(timed_grouped_arrivals['pct_change'][1:-1])-1)*100):,.2f}%",
+    text=f"Growth rate: {((gmean(timed_grouped_arrivals['pct_change'][1:-1])-1)*100):,.2f}%",
     font=dict(size=24, color="black"),
     align="center",
     bgcolor="rgba(255, 255, 255, 0.8)",
@@ -193,7 +193,7 @@ fig2_3.update_traces(line_color='#f1c40f')
 fig2_3.add_annotation(
     x=timed_grouped_spendings['year'].min() + ((timed_grouped_spendings['year'].max() - timed_grouped_spendings['year'].min())*.15),
     y=timed_grouped_spendings['rcpt_per_arvl'].max()*0.85,
-    text=f"Growth rate: ${((gmean(timed_grouped_spendings['pct_change'][1:-1])-1)*100):,.2f}%",
+    text=f"Growth rate: {((gmean(timed_grouped_spendings['pct_change'][1:-1])-1)*100):,.2f}%",
     font=dict(size=24, color="black"),
     align="center",
     bgcolor="rgba(255, 255, 255, 0.8)",
