@@ -1,5 +1,5 @@
 plotly
-plotly.express
 pandas
-scipy.stats
+numpy
+scipy
 huggingface_hub
