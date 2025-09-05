@@ -108,3 +108,9 @@ Briefly, the new task follows these steps:
 - **Close** the connection to the database.
 
 As we need this tasks to perform automatically, we also need to include this tasks in dag. So, we need to wrap this process into callable function, then add this tasks to dag.
+
+## 7. Build AI-Enhanced Dashboard with Streamlit (Sep 4, 2025)
+Another form of deliverables is into the web-based so it was able to share with broader scale of end-users. Here we gonna use Streamlit [https://streamlit.io] to build up the lightweight web application using python.
+Briefly, we built up the dashboard based on visualization already built from PowerBI as described in section 5.
+
+Moreover, we enhance the narration capability with Llama3.1 AI models using huggingface's API so they're able to give users the AI-generated narrative based on given data.
