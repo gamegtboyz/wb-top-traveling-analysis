@@ -2,7 +2,6 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 from scipy.stats import gmean
-import os
 from huggingface_hub import InferenceClient, login
 
 # import data into work area
