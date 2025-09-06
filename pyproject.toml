@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wb-top-traveling-analysis"
+version = "0.1.0"
+description = "Analytics proejct of international tourism data provided by World Bank"
+readme = "readme.md"
+requires-python = ">=3.10"
+authors = [{name = "Asa Bejraputra", email = "gamegame.gtboyz@gmail.com "}]
+dependencies = [
+    "streamlit >=1.24.1",
+    "pandas >=2.0.3",
+    "numpy >=1.26.4",
+    "plotly >=5.16.1",
+    "requests >=2.31.0",
+    "python-dotenv >=1.0.0",
+    "scipy >=1.11.4",
+    "huggingface-hub >=0.18.1"
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+[tool.black]
+line-length = 100
+target-version = ['py310']
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+ignore_missing_imports = true
