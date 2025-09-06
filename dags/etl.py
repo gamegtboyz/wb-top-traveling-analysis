@@ -2,6 +2,7 @@ import wbgapi as wb
 import pandas as pd
 from sqlalchemy import create_engine
 from config.dbconfig import connection_string
+from src.wb_travel.metrics import ratiofill, derived_divide, derived_divide_pct
 
 def extract_transform_load():
     """
@@ -58,9 +59,9 @@ def extract_transform_load():
     ).reset_index()
 
     # add the calculated column
-    data['rcpt_per_arvl'] = data['ST.INT.RCPT.CD'] / data['ST.INT.ARVL']
-    data['rcpt_per_gdp'] = data['ST.INT.RCPT.CD'] / data['NY.GDP.MKTP.CD']
-    data['arvl_per_pop'] = data['ST.INT.ARVL'] / data['SP.POP.TOTL']
+    data['rcpt_per_arvl'] = derived_divide(data['ST.INT.RCPT.CD'], data['ST.INT.ARVL'])
+    data['rcpt_per_gdp'] = derived_divide_pct(data['ST.INT.RCPT.CD'], data['NY.GDP.MKTP.CD'])
+    data['arvl_per_pop'] = derived_divide(data['ST.INT.ARVL'], data['SP.POP.TOTL'])
 
     # join the country with the name and income level
     data = data.merge(country_map, left_on='economy', right_on='id', how='left')
@@ -88,20 +89,20 @@ def extract_transform_load():
 
     engine.dispose()
 
+# We moved this function to src/wb_travel/metrics.py
+# def ratiofill(fill_df, ref_df):
+#     """
+#     fill missing values in fill_df using the ratio of ref_df
+#     The ratio is calculated as the mean of the values in ref_df
+#     for each year, and then applied to fill_df.
+#     """
 
-def ratiofill(fill_df, ref_df):
-    """
-    fill missing values in fill_df using the ratio of ref_df
-    The ratio is calculated as the mean of the values in ref_df
-    for each year, and then applied to fill_df.
-    """
+#     # find the ratio of the reference dataframe
+#     ratio = fill_df.mean(axis=1).values[0]/ref_df.mean(axis=1).values[0]
 
-    # find the ratio of the reference dataframe
-    ratio = fill_df.mean(axis=1).values[0]/ref_df.mean(axis=1).values[0]
+#     # find and fill the NaN values
+#     for column in fill_df.columns:
+#         if fill_df[column].isna().values[0]:
+#             fill_df[column].values[0] = ref_df[column].values[0] * ratio
 
-    # find and fill the NaN values
-    for column in fill_df.columns:
-        if fill_df[column].isna().values[0]:
-            fill_df[column].values[0] = ref_df[column].values[0] * ratio
-
-    return fill_df.values
+#     return fill_df.values

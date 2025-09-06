@@ -13,6 +13,14 @@ Requires-Dist: requests>=2.31.0
 Requires-Dist: python-dotenv>=1.0.0
 Requires-Dist: scipy>=1.11.4
 Requires-Dist: huggingface-hub>=0.18.1
+Provides-Extra: dev
+Requires-Dist: pytest>=7.4.2; extra == "dev"
+Requires-Dist: pytest-cov>=4.1.0; extra == "dev"
+Requires-Dist: black>=24.9.1; extra == "dev"
+Requires-Dist: flake8>=6.1.0; extra == "dev"
+Requires-Dist: isort>=5.12.0; extra == "dev"
+Requires-Dist: mypy>=1.3.0; extra == "dev"
+Requires-Dist: types-requests; extra == "dev"
 
 # Historical Trends of Tourism Analysis
 This project is the simple project built as a showcase of ETL process and pipelines building, then we will use those data to perform an analytical review, then visualize them through common BI tools -- We gonna use PowerBI in this case.
