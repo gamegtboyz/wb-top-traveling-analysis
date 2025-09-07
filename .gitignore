@@ -12,6 +12,7 @@ world_tourism_analysis_csv.pbix
 *.json
 *.geojson
 *.html
+.env
 api_keys_archive.py
 
 !data/data.csv
