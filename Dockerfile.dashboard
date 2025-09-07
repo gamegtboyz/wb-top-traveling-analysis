@@ -1,0 +1,34 @@
+# Dockerfile.dashboard
+FROM python:3.11-slim
+
+# Expose streamlit port
+EXPOSE 8501
+
+# Avoid writing pyc files & enable stdout flush
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    g++ \
+    libffi-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# copy only dependency definitions first (better Docker cache usage)
+COPY pyproject.toml readme.md /app/
+COPY src /app/src
+COPY data /app/data
+
+# install deps
+RUN pip install --upgrade pip setuptools wheel && pip install .
+
+# copy source code & dashboard scripts
+COPY streamlit_dashboard.py /app/
+
+# streamlit runs here
+CMD ["streamlit", "run", "streamlit_dashboard.py", "--server.port=8501", "--server.address=0.0.0.0"]

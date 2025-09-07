@@ -3,6 +3,8 @@ import plotly.express as px
 import pandas as pd
 from scipy.stats import gmean
 from huggingface_hub import InferenceClient, login
+import os
+from dotenv import load_dotenv
 
 # import data into work area
 data = pd.read_csv('./data/data.csv')
@@ -58,7 +60,11 @@ timed_grouped_spendings['pct_change'] = timed_grouped_spendings['rcpt_per_arvl']
 
 timed_grouped_contributions = grouped_contributions[(grouped_contributions['country_name'] == selected_countries)].sort_values(by='year')
 
-hf_token = st.secrets["HF_TOKEN"]
+# hf_token = st.secrets["HF_TOKEN"]
+load_dotenv()
+hf_token = os.getenv("HF_TOKEN")
+if not hf_token:
+    raise ValueError("Hugging Face token not found.")
 login(hf_token)
 
 # load the models here
