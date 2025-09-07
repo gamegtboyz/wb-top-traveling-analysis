@@ -61,10 +61,10 @@ timed_grouped_spendings['pct_change'] = timed_grouped_spendings['rcpt_per_arvl']
 timed_grouped_contributions = grouped_contributions[(grouped_contributions['country_name'] == selected_countries)].sort_values(by='year')
 
 # hf_token = st.secrets["HF_TOKEN"]
-load_dotenv()
+# load_dotenv()
 hf_token = os.getenv("HF_TOKEN")
 if not hf_token:
-    raise ValueError("Hugging Face token not found.")
+    raise ValueError("Hugging Face token not found. Please set HF_TOKEN as an environment variable.")
 login(hf_token)
 
 # load the models here

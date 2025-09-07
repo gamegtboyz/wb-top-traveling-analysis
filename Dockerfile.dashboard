@@ -1,13 +1,14 @@
 # Dockerfile.dashboard
 FROM python:3.11-slim
 
-# Expose streamlit port
+# Expose streamlit port from docker container to host
 EXPOSE 8501
 
 # Avoid writing pyc files & enable stdout flush
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
+# set work directory
 WORKDIR /app
 
 # install system dependencies
