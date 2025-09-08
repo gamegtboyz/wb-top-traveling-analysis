@@ -53,3 +53,7 @@ jobs:
                 aws apprunner update-service \
                   --service-arn arn:aws:apprunner:${{ secrets.AWS_REGION }}:783972422656:service/wb-top-traveling-analysis/67eaf217061049f5bb140100fa988c2d \
                   --source-configuration "ImageRepository={ImageIdentifier=${{ secrets.AWS_ECR_REPO }}:latest,ImageRepositoryType=ECR}"
+
+                echo "Waiting for App Runner deployment to complete..."
+                aws apprunner update-service \
+                  --service-arn arn:aws:apprunner:${{ secrets.AWS_REGION }}:783972422656:service/wb-top-traveling-analysis/67eaf217061049f5bb140100fa988c2d
