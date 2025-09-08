@@ -22,7 +22,7 @@ RUN pip install --upgrade pip setuptools wheel
 # Copy the rest of the source code
 COPY src /app/src
 COPY data /app/data
-COPY streanlit_dashboard.py /app/
+COPY streamlit_dashboard.py /app/
 
 # Install your package
 RUN pip install .
