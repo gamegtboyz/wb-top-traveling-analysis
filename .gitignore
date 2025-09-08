@@ -14,5 +14,6 @@ world_tourism_analysis_csv.pbix
 *.html
 .env
 api_keys_archive.py
+*.pyc
 
 !data/data.csv
