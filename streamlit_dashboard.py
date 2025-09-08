@@ -3,7 +3,7 @@ import plotly.express as px
 import pandas as pd
 from scipy.stats import gmean
 from huggingface_hub import InferenceClient, login
-import os
+import os, sys
 from dotenv import load_dotenv
 
 # import data into work area
@@ -65,7 +65,8 @@ timed_grouped_contributions = grouped_contributions[(grouped_contributions['coun
 hf_token = os.getenv("HF_TOKEN") or st.secrets["HF_TOKEN"]
 if not hf_token:
     raise ValueError("Hugging Face token not found. Please set HF_TOKEN as an environment variable.")
-login(hf_token)
+print("HF_TOKEN exists?", bool(hf_token), file=sys.stderr)
+#login(hf_token)
 
 # load the models here
 model_id = "meta-llama/Llama-3.1-8B-Instruct"
