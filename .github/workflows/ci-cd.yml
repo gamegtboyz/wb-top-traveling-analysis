@@ -10,13 +10,14 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
+            
             - uses: actions/setup-python@v5
               with:
                   python-version: '3.11'
 
-            - name: Upgrade pip & install
+            - name: Install dependencies
               run: |
-                pip install --upgrade pip setuptools wheel
+                pip install --upgrade pip
                 pip install .[dev]
 
             - name: Run tests
@@ -35,7 +36,7 @@ jobs:
               with:
                 aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
                 aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                aws-region: us-east-1
+                aws-region: ${{ secrets.AWS_REGION }}
 
             - name: login to Amazon ECR
               id: ecr
@@ -43,7 +44,12 @@ jobs:
 
             - name: Build, tag, and push image to Amazon ECR
               run: |
-                IMAGE_REPO = ${{steps.ecr.outputs.registry}}/wb-top-traveling-analysis
-                IMAGE_TAG = latest
-                docker build -t $IMAGE_REPO:$IMAGE_TAG .
-                docker push $IMAGE_REPO:$IMAGE_TAG
+                IMAGE_URI=${{ secrets.AWS_ECR_REPO }}:latest
+                docker build -t $IMAGE_URI -f Dockerfile.dashboard .
+                docker push $IMAGE_URI
+
+            - name: Deploy to App Runner
+              run: |
+                aws apprunner update-service \
+                  --service-arn arn:aws:apprunner:${{ secrets.AWS_REGION }}:783972422656:service/wb-top-travel-dashboard/67eaf217061049f5bb140100fa988c2d \
+                  --source-configuration "ImageRepository={ImageIdentifier=${{ secrets.AWS_ECR_REPO }}:latest,ImageRepositoryType=ECR}"
