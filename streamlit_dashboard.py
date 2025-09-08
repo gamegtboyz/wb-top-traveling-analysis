@@ -62,7 +62,7 @@ timed_grouped_contributions = grouped_contributions[(grouped_contributions['coun
 
 # hf_token = st.secrets["HF_TOKEN"]
 # load_dotenv()
-hf_token = os.getenv("HF_TOKEN")
+hf_token = os.getenv("HF_TOKEN") or st.secrets["HF_TOKEN"]
 if not hf_token:
     raise ValueError("Hugging Face token not found. Please set HF_TOKEN as an environment variable.")
 login(hf_token)
