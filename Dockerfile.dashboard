@@ -8,29 +8,30 @@ EXPOSE 8501
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-# set work directory
-WORKDIR /app
-COPY . /app/
+# Expose Streamlit port
+EXPOSE 8501
 
-# install system dependencies
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# Copy dependency definitions
+COPY pyproject.toml readme.md /app/
+
+# Install system deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    gcc \
-    g++ \
-    libffi-dev \
-    curl \
+    build-essential gcc g++ libffi-dev curl \
     && rm -rf /var/lib/apt/lists/*
 
-# copy only dependency definitions first (better Docker cache usage)
-COPY pyproject.toml readme.md /app/
-COPY src /app/src
-COPY data /app/data
+# Install Python deps (make sure streamlit is in pyproject.toml)
+RUN pip install --upgrade pip setuptools wheel
 
-# install deps
-RUN pip install --upgrade pip setuptools wheel && pip install .
+# Copy the rest of the source code
+COPY . /app/
 
-# copy source code & dashboard scripts
-COPY streamlit_dashboard.py /app/
+# Install your package
+RUN pip install .
 
-# streamlit runs here
+# Run Streamlit
 CMD ["streamlit", "run", "streamlit_dashboard.py", "--server.port=8501", "--server.address=0.0.0.0"]
