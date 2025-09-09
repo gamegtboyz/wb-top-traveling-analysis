@@ -28,8 +28,8 @@ COPY streamlit_dashboard.py /app/
 RUN pip install .
 
 # Expose Streamlit port to host
-EXPOSE 8501
+EXPOSE 8080
 
 # Run Streamlit
-CMD ["streamlit", "run", "streamlit_dashboard.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.headless=true"]
+CMD ["streamlit", "run", "streamlit_dashboard.py", "--server.port=8080", "--server.address=0.0.0.0", "--server.headless=true"]
 # CMD ["ls", "-l", "/app"]
