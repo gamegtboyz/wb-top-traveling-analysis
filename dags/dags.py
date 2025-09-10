@@ -32,11 +32,11 @@ with DAG(
         dag=dag
     )
 
-    query_to_csv = PythonOperator(
-        task_id='query_to_csv',
-        python_callable=query_to_csv,
-        dag=dag
-    )
+    # query_to_csv = PythonOperator(
+    #     task_id='query_to_csv',
+    #     python_callable=query_to_csv,
+    #     dag=dag
+    # )
     
     # set the task dependencies
-    extract_transform_load >> query_to_csv
+    extract_transform_load #>> query_to_csv
