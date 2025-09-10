@@ -1,8 +1,6 @@
 import wbgapi as wb
 import pandas as pd
-from sqlalchemy import create_engine
-from config.dbconfig import connection_string
-from src.wb_travel.metrics import ratiofill, derived_divide, derived_divide_pct
+from metrics import ratiofill, derived_divide, derived_divide_pct
 
 def extract_transform_load():
     """
@@ -90,7 +88,7 @@ def extract_transform_load():
     # engine.dispose()
 
     # Load the data into a CSV file
-    output_file = 'data/data.csv'
+    output_file = 'data.csv'
     try:
         data.to_csv(output_file, index=False)
         print(f"Data successfully written to {output_file}")
