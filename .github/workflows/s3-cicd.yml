@@ -7,7 +7,6 @@ on:
         paths:
             - "dags/**"
             - "mwaa-requirements.txt"
-            - "src/wb_travel/metrics.py"
 
 jobs:
     deploy:
@@ -28,4 +27,6 @@ jobs:
                 aws s3 sync dags s3://wb-travel-s3buckets/dags/ --delete
                 aws s3 cp mwaa-requirements.txt s3://wb-travel-s3buckets/requirements.txt
 
+
+# - "src/wb_travel/metrics.py"
 # aws s3 cp src/wb_travel/metrics.py s3://wb-travel-s3buckets/dags/metrics.py
