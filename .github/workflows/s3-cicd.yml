@@ -3,7 +3,7 @@ name: Deploy MWAA components to S3
 on:
     push:
         branches:
-            - aws-airflow
+            - origin/aws-airflow
         paths:
             - "dags/**"
             - "mwaa-requirements.txt"
