@@ -6,7 +6,6 @@ on:
             - aws-airflow
         paths:
             - "dags/**"
-            - "mwaa-requirements.txt"
 
 jobs:
     deploy:
@@ -25,4 +24,3 @@ jobs:
             - name: Sync DAGS and requirements to S3
               run: |
                 aws s3 sync dags s3://wb-travel-s3buckets/dags/ --delete
-                aws s3 cp mwaa-requirements.txt s3://wb-travel-s3buckets/mwaa-requirements.txt
