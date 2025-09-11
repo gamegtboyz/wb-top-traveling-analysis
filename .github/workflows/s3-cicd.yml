@@ -2,8 +2,6 @@ name: Deploy MWAA components to S3
 
 on:
     push:
-        branches:
-            - aws-airflow
         paths:
             - "dags/**"
 
@@ -14,13 +12,16 @@ jobs:
             - name: Checkout Repository
               uses: actions/checkout@v4
 
-            - name: Configure AWS Credentials
-              uses: aws-actions/configure-aws-credentials@v2
-              with:
-                  aws-access-key-id: ${{ secrets.AWS_S3_DEPLOYMENT_ACCESS_KEY_ID }}
-                  aws-secret-access-key: ${{ secrets.AWS_S3_DEPLOYMENT_SECRET_ACCESS_KEY }}
-                  aws-region: us-east-1
+            - name: hello world
+              run: echo "Hello, world!"
+
+            # - name: Configure AWS Credentials
+            #   uses: aws-actions/configure-aws-credentials@v2
+            #   with:
+            #       aws-access-key-id: ${{ secrets.AWS_S3_DEPLOYMENT_ACCESS_KEY_ID }}
+            #       aws-secret-access-key: ${{ secrets.AWS_S3_DEPLOYMENT_SECRET_ACCESS_KEY }}
+            #       aws-region: us-east-1
             
-            - name: Sync DAGS and requirements to S3
-              run: |
-                aws s3 sync dags s3://wb-travel-s3buckets/dags/ --delete
+            # - name: Sync DAGS and requirements to S3
+            #   run: |
+            #     aws s3 sync dags s3://wb-travel-s3buckets/dags/ --delete
