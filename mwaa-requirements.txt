@@ -1,3 +1,4 @@
 wbgapi
 pandas
 numpy
+boto3

@@ -3,7 +3,8 @@ import pandas as pd
 #from sqlalchemy import create_engine
 #from config.dbconfig import connection_string
 #from src.wb_travel.metrics import ratiofill, derived_divide, derived_divide_pct
-from metrics import ratiofill, derived_divide, derived_divide_pct
+from metrics import ratiofill, derived_divide, derived_divide_pct, csv_s3_load
+from airflow.models import Variable
 
 def extract_transform_load():
     """
@@ -77,9 +78,9 @@ def extract_transform_load():
         'series': 'indicator'
     }, inplace=True)
 
-    # Load the data into a CSV file
+    # Load the data into a CSV file in S3 bucket
     try:
-        data.to_csv('data.csv', index=False)
+        csv_s3_load(data, bucket_name=Variable.get("S3_BUCKET_NAME"), outputs='data/data.csv')
         print("data extracted and transformed successfully.")
     except Exception as e:
         print(f"An error occurred while saving data to CSV: {e}")
