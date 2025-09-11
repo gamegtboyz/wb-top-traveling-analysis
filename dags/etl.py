@@ -1,8 +1,9 @@
 import wbgapi as wb
 import pandas as pd
-from sqlalchemy import create_engine
-from config.dbconfig import connection_string
-from src.wb_travel.metrics import ratiofill, derived_divide, derived_divide_pct
+#from sqlalchemy import create_engine
+#from config.dbconfig import connection_string
+#from src.wb_travel.metrics import ratiofill, derived_divide, derived_divide_pct
+from metrics import ratiofill, derived_divide, derived_divide_pct
 
 def extract_transform_load():
     """
@@ -76,18 +77,25 @@ def extract_transform_load():
         'series': 'indicator'
     }, inplace=True)
 
-    # Load the data into a SQL database
-    engine = create_engine(connection_string)
-
-    table_name = 'world_travel_data'
-
+    # Load the data into a CSV file
     try:
-        data.to_sql(table_name, engine, if_exists='replace', index=True)
-        print(f"data loaded into {table_name} table in the database successfully.")
+        data.to_csv('data.csv', index=False)
+        print("data extracted and transformed successfully.")
     except Exception as e:
-        print(f"An error occurred while loading data into the database: {e}")
+        print(f"An error occurred while saving data to CSV: {e}")
 
-    engine.dispose()
+    # # Load the data into a SQL database
+    # engine = create_engine(connection_string)
+
+    # table_name = 'world_travel_data'
+
+    # try:
+    #     data.to_sql(table_name, engine, if_exists='replace', index=True)
+    #     print(f"data loaded into {table_name} table in the database successfully.")
+    # except Exception as e:
+    #     print(f"An error occurred while loading data into the database: {e}")
+
+    # engine.dispose()
 
 # We moved this function to src/wb_travel/metrics.py
 # def ratiofill(fill_df, ref_df):
