@@ -37,5 +37,5 @@ with DAG(
     #     dag=dag
     # )
     
-    # set the task dependencies
+    # set the task dependencies, we will uncomment it later
     extract_transform_load # >> query_to_csv
