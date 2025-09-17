@@ -4,7 +4,6 @@ import pandas as pd
 from scipy.stats import gmean
 from huggingface_hub import InferenceClient, login
 import os, sys
-from dotenv import load_dotenv
 
 # import data into work area
 data = pd.read_csv('./data/data.csv')
@@ -340,3 +339,5 @@ with col9:
     st.plotly_chart(fig3_3, use_container_width=True)
 with col10:
     st.plotly_chart(fig3_4, use_container_width=True)
+
+# load data from s3 bucket

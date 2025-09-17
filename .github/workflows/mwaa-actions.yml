@@ -1,0 +1,33 @@
+name: Sync Chnages to S3
+
+on:
+  push:
+    branches:
+      - aws-airflow
+    paths:
+      - "dags/**"
+      - "mwaa-requirements.txt"
+      - "src/wb_travel/metrics.py"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+    #   - name: Hello World Action
+    #     run: echo "Hello, World!"
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_S3_DEPLOYMENT_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_S3_DEPLOYMENT_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Sync DAGS and requirements to S3
+        run: |
+          aws s3 sync dags s3://wb-travel-s3buckets/dags/ --delete
+          aws s3 cp src/wb_travel/metrics.py s3://wb-travel-s3buckets/dags/metrics.py
+          aws s3 cp mwaa-requirements.txt s3://wb-travel-s3buckets/requirements.txt

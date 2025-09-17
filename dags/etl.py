@@ -1,6 +1,14 @@
 import wbgapi as wb
 import pandas as pd
-from metrics import ratiofill, derived_divide, derived_divide_pct
+
+# use this when run with local docker
+# from sqlalchemy import create_engine
+# from config.dbconfig import connection_string
+# from src.wb_travel.metrics import ratiofill, derived_divide, derived_divide_pct
+
+# use this one when run with mwaa
+from metrics import ratiofill, derived_divide, derived_divide_pct, csv_s3_load
+from airflow.models import Variable
 
 def extract_transform_load():
     """
@@ -74,7 +82,14 @@ def extract_transform_load():
         'series': 'indicator'
     }, inplace=True)
 
-    # Load the data into a SQL database
+    # Load the data into a CSV file in S3 bucket (use this when run with mwaa)
+    try:
+        csv_s3_load(data, bucket_name=Variable.get("S3_BUCKET_NAME"), outputs='data/data.csv')
+        print("data extracted and transformed successfully.")
+    except Exception as e:
+        print(f"An error occurred while saving data to CSV: {e}")
+
+    # # Load the data into a SQL database (use this when run with local docker)
     # engine = create_engine(connection_string)
 
     # table_name = 'world_travel_data'
@@ -86,29 +101,3 @@ def extract_transform_load():
     #     print(f"An error occurred while loading data into the database: {e}")
 
     # engine.dispose()
-
-    # Load the data into a CSV file
-    output_file = 'data.csv'
-    try:
-        data.to_csv(output_file, index=False)
-        print(f"Data successfully written to {output_file}")
-    except Exception as e:
-        print(f"An error occurred while writing data to CSV: {e}")
-
-# We moved this function to src/wb_travel/metrics.py
-# def ratiofill(fill_df, ref_df):
-#     """
-#     fill missing values in fill_df using the ratio of ref_df
-#     The ratio is calculated as the mean of the values in ref_df
-#     for each year, and then applied to fill_df.
-#     """
-
-#     # find the ratio of the reference dataframe
-#     ratio = fill_df.mean(axis=1).values[0]/ref_df.mean(axis=1).values[0]
-
-#     # find and fill the NaN values
-#     for column in fill_df.columns:
-#         if fill_df[column].isna().values[0]:
-#             fill_df[column].values[0] = ref_df[column].values[0] * ratio
-
-#     return fill_df.values
