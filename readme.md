@@ -243,7 +243,7 @@ python -m venv /home/ubuntu
 source /home/ubuntu/bin/activate
 
 # under the virutal environment install the remaining libraries in virtual environment
-sudo pip install awscli streamlit plotly pandas numpy scipy huggingface_hub boto3 io
+sudo pip install awscli streamlit plotly pandas numpy scipy huggingface_hub boto3
 
 # copy the data files from S3 bucket
 aws s3 cp s3://wb-travel-s3buckets/data/data.csv /home/ubuntu/data/data.csv
@@ -299,6 +299,47 @@ sudo systemctl start startup.service
 At this point after you stop and restart the EC2 instance, the installed package still persist. You could access to streamlit dashboard using `http://<EC2-public-IP>:8501` in your browser.
 
 ### 2.9 Reverse Proxy with Nginx
-When we doesn't want to add up your port number everytime you access the page. You could
+When we doesn't want to add up your port number everytime you access the page. You could do reverse proxy with nginx as follows:
+
+First, we will create the new nginx config file:
+```
+-- EC2 terminal --
+
+sudo nano /etc/nginx/sites-available/streamlit
+```
+Then input the following config in the file
+```
+-- streamlit (nginx config file) --
+
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    server_name _;
+
+    location / {
+        proxy_pass http://127.0.0.1:8501;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+Then reload nginx:
+```
+-- EC2 terminal --
+
+sudo ln -s /etc/nginx/sites-available/streamlit /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+```
+With this you could access the streamlit using `http://<EC2-public-ip>` without the port number specified.
 
 ### 2.10 Fix your public IP with AWS Elastic IP service
+Since we create EC2 instance with public access. By default, EC2 public ip will be randomly allocated everytime you start the instance. So, to fix the public IP number, we go to Elastic IPs service, then allocate the elastic IP address to our EC2 instance so this would fix the IP address.
+
+Then we could use this allocated IP to register the domain with Amazon Route 53, which is DNS service offered by Amazon.
