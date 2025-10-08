@@ -2,13 +2,13 @@ import wbgapi as wb
 import pandas as pd
 
 # use this when run with local docker
-# from sqlalchemy import create_engine
-# from config.dbconfig import connection_string
-# from src.wb_travel.metrics import ratiofill, derived_divide, derived_divide_pct
+from sqlalchemy import create_engine
+from config.dbconfig import connection_string
+from src.wb_travel.metrics import ratiofill, derived_divide, derived_divide_pct
 
 # use this one when run with mwaa
-from metrics import ratiofill, derived_divide, derived_divide_pct, csv_s3_load
-from airflow.models import Variable
+# from metrics import ratiofill, derived_divide, derived_divide_pct, csv_s3_load
+# from airflow.models import Variable
 
 def extract_transform_load():
     """
@@ -66,7 +66,7 @@ def extract_transform_load():
 
     # add the calculated column
     data['rcpt_per_arvl'] = derived_divide(data['ST.INT.RCPT.CD'], data['ST.INT.ARVL'])
-    data['rcpt_per_gdp'] = derived_divide_pct(data['ST.INT.RCPT.CD'], data['NY.GDP.MKTP.CD'])
+    data['rcpt_per_gdp'] = derived_divide(data['ST.INT.RCPT.CD'], data['NY.GDP.MKTP.CD'])
     data['arvl_per_pop'] = derived_divide(data['ST.INT.ARVL'], data['SP.POP.TOTL'])
 
     # join the country with the name and income level
@@ -83,21 +83,21 @@ def extract_transform_load():
     }, inplace=True)
 
     # Load the data into a CSV file in S3 bucket (use this when run with mwaa)
-    try:
-        csv_s3_load(data, bucket_name=Variable.get("S3_BUCKET_NAME"), outputs='data/data.csv')
-        print("data extracted and transformed successfully.")
-    except Exception as e:
-        print(f"An error occurred while saving data to CSV: {e}")
-
-    # # Load the data into a SQL database (use this when run with local docker)
-    # engine = create_engine(connection_string)
-
-    # table_name = 'world_travel_data'
-
     # try:
-    #     data.to_sql(table_name, engine, if_exists='replace', index=True)
-    #     print(f"data loaded into {table_name} table in the database successfully.")
+    #     csv_s3_load(data, bucket_name=Variable.get("S3_BUCKET_NAME"), outputs='data/data.csv')
+    #     print("data extracted and transformed successfully.")
     # except Exception as e:
-    #     print(f"An error occurred while loading data into the database: {e}")
+    #     print(f"An error occurred while saving data to CSV: {e}")
 
-    # engine.dispose()
+    # Load the data into a SQL database (use this when run with local docker)
+    engine = create_engine(connection_string)
+
+    table_name = 'world_travel_data'
+
+    try:
+        data.to_sql(table_name, engine, if_exists='replace', index=True)
+        print(f"data loaded into {table_name} table in the database successfully.")
+    except Exception as e:
+        print(f"An error occurred while loading data into the database: {e}")
+
+    engine.dispose()

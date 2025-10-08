@@ -10,8 +10,8 @@ from airflow.operators.python import PythonOperator
 # import the function to be executed
 from etl import extract_transform_load
 
-# # use this when run with local docker
-# from db_query import query_to_csv
+# use this when run with local docker
+from db_query import query_to_csv
 
 
 # instantiate the DAG
@@ -34,11 +34,11 @@ with DAG(
     )
 
     # # use this when run with local docker
-    # query_to_csv = PythonOperator(
-    #     task_id='query_to_csv',
-    #     python_callable=query_to_csv,
-    #     dag=dag
-    # )
+    query_to_csv = PythonOperator(
+        task_id='query_to_csv',
+        python_callable=query_to_csv,
+        dag=dag
+    )
     
-    # set the task dependencies, we will uncomment it later
-    extract_transform_load #>> query_to_csv
+    # set the task dependencies, uncomment the query_to_csv line when run with local docker
+    extract_transform_load >> query_to_csv
