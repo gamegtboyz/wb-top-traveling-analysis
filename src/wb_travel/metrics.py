@@ -8,8 +8,8 @@ from airflow.models import Variable
 def derived_divide(numerator: pd.Series, denominator: pd.Series) -> pd.Series:
     return numerator.divide(denominator.replace({0: np.nan})).astype("float64")
 
-def derived_divide_pct(numerator: pd.Series, denominator: pd.Series) -> pd.Series:
-    return numerator.divide(denominator.replace({0: np.nan})) * 100.0
+# def derived_divide_pct(numerator: pd.Series, denominator: pd.Series) -> pd.Series:
+#     return numerator.divide(denominator.replace({0: np.nan})) * 100.0
 
 # def cagr(series: pd.Series) -> float:
 #     """

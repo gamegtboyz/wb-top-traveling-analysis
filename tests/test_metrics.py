@@ -1,5 +1,5 @@
 import pandas as pd
-from wb_travel.metrics import derived_divide, derived_divide_pct, ratiofill
+from wb_travel.metrics import derived_divide, ratiofill
 
 
 # test user-defined functions in metrics.py
@@ -15,11 +15,11 @@ def test_derived_divide_div_by_zero_is_nan():
     output = derived_divide(r, a)
     assert pd.isna(output.iloc[0]) & (output.iloc[1] == 200.0)
 
-def test_derived_divide_pct():
-    r = pd.Series([50.0, 200.0])
-    g = pd.Series([1000.0, 4000.0])
-    output = derived_divide_pct(r, g)
-    assert output.tolist() == [5.0, 5.0]
+# def test_derived_divide_pct():
+#     r = pd.Series([50.0, 200.0])
+#     g = pd.Series([1000.0, 4000.0])
+#     output = derived_divide_pct(r, g)
+#     assert output.tolist() == [5.0, 5.0]
 
 # def test_cagr():
 #     assert pd.isna(cagr(pd.Series([None, 100.0])))
