@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import boto3
+# import boto3
 from io import StringIO
 # from airflow.models import Variable
 
