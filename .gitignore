@@ -17,5 +17,7 @@ api_keys_archive.py
 *.pyc
 *.pem
 hf_keys.py
+.github/workflows/ci-cd.yml
+.github/workflows/test.yml
 
 !data/data.csv

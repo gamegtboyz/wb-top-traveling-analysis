@@ -1,9 +1,9 @@
-name: Sync Chnages to S3
+name: Unit Test and AWS Deployment
 
 on:
   push:
     branches:
-      - aws-airflow
+      - main
     paths:
       - "dags/**"
       - "mwaa-requirements.txt"
@@ -16,8 +16,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-    #   - name: Hello World Action
-    #     run: echo "Hello, World!"
+      - name: Run tests
+        run: pytest
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -26,8 +26,17 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_S3_DEPLOYMENT_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: Set up private key
+        run: |
+          echo "${{ secrets.EC2_PEM_KEY }}" > wb-travel-ec2pem.pem
+          chmod 600 wb-travel-ec2pem.pem
+
       - name: Sync DAGS and requirements to S3
         run: |
           aws s3 sync dags s3://wb-travel-s3buckets/dags/ --delete
           aws s3 cp src/wb_travel/metrics.py s3://wb-travel-s3buckets/dags/metrics.py
           aws s3 cp mwaa-requirements.txt s3://wb-travel-s3buckets/requirements.txt
+
+      - name: secure copy (scp) streamlit dashboard to EC2
+        run: |
+          scp -i wb-travel-ec2pem.pem streamlit_dashboard.py ubuntu@54.236.183.79:/home/ubuntu
