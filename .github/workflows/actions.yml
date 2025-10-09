@@ -51,11 +51,4 @@ jobs:
           aws s3 sync dags s3://wb-travel-s3buckets/dags/ --delete
           aws s3 cp src/wb_travel/metrics.py s3://wb-travel-s3buckets/dags/metrics.py
           aws s3 cp mwaa-requirements.txt s3://wb-travel-s3buckets/requirements.txt
-
-      - name: Add remote server to known_hosts
-        run: |
-          ssh-keyscan -H 54.236.183.79 >> ~/.ssh/known_hosts
-
-      - name: secure copy (scp) streamlit dashboard to EC2
-        run: |
-          scp -i wb-travel-ec2pem.pem streamlit_dashboard.py ubuntu@54.236.183.79:/home/ubuntu
+          aws s3 cp data/data.csv s3://wb-travel-s3buckets/data/data.csv
