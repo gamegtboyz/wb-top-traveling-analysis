@@ -46,7 +46,7 @@ def ratiofill(fill_df: pd.DataFrame, ref_df: pd.DataFrame) -> pd.DataFrame:
 
 # def csv_s3_load(df: pd.DataFrame, bucket_name: str, outputs: str):
 #     """
-#     Load a DataFrame as a CSV file to an S3 bucket.
+#     Load a DataFrame as a CSV file to an S3 bucket
 #     """
 #     csv_buffer = StringIO()
 #     df.to_csv(csv_buffer, index=False)
