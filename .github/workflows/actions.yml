@@ -8,6 +8,7 @@ on:
       - "dags/**"
       - "mwaa-requirements.txt"
       - "src/wb_travel/metrics.py"
+      - "tests/test_metrics.py"
 
 jobs:
   deploy:
