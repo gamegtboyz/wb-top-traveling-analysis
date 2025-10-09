@@ -26,7 +26,7 @@ def test_derived_divide_div_by_zero_is_nan():
 #     assert pd.isna(cagr(pd.Series([None, 100.0])))
 #     assert pd.isna(cagr(pd.Series([100])))
     
-def test_ratiofill(target, reference):
+def test_ratiofill():
     # Create input DataFrames
     fill_df = pd.DataFrame({0: [np.nan, 200.0, np.nan, 400.0, np.nan]})
     ref_df = pd.DataFrame({0: [10.0, 20.0, 30.0, 40.0, 50.0]})
