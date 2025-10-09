@@ -27,7 +27,20 @@ def test_derived_divide_div_by_zero_is_nan():
 #     assert pd.isna(cagr(pd.Series([100])))
     
 def test_ratiofill(target, reference):
-    ratio = reference.iloc[-1, 0] / reference.iloc[-2, 0]
-    filled = target.fillna(method='ffill')  
-    return pd.DataFrame(filled)
+    # Create input DataFrames
+    fill_df = pd.DataFrame({0: [np.nan, 200.0, np.nan, 400.0, np.nan]})
+    ref_df = pd.DataFrame({0: [10.0, 20.0, 30.0, 40.0, 50.0]})
+
+    # Run the function
+    output = ratiofill(fill_df.copy(), ref_df)
+
+    # Expected ratio
+    ratio = np.nanmean(fill_df[0]) / np.mean(ref_df[0])
+    # Expected filled values
+    expected = fill_df.copy()
+    expected[0] = expected[0].fillna(ref_df[0] * ratio)
+    expected_array = expected.values
+
+    # Compare results
+    assert np.allclose(output, expected_array)
     
