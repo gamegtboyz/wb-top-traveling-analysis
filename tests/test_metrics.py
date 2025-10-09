@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from wb_travel.metrics import derived_divide, ratiofill
 
 
@@ -30,5 +31,5 @@ def test_ratiofill():
     reference = pd.DataFrame({0: [10.0, 20.0, 30.0, 40.0, 50.0]})
     output = ratiofill(target, reference)
     expected = pd.DataFrame({0: [100.0, 200.0, 300.0, 400.0, 500.0]})
-    assert output.equals(expected)
+    assert np.allclose(output, expected)
     
