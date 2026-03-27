@@ -7,7 +7,6 @@ test.py
 */__pycache__
 *.csv
 *.drawio*
-world_tourism_analysis_csv.pbix
 *.png
 *.json
 *.geojson
